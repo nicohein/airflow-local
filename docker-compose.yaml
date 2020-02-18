@@ -1,0 +1,111 @@
+version: '3.7'
+services:
+    redis:
+        image: 'redis:5.0.5'
+
+    postgres:
+        image: postgres:9.6
+        environment:
+            - POSTGRES_USER=airflow-local
+            - POSTGRES_PASSWORD=airflow-local
+            - POSTGRES_DB=airflow-local
+        logging:
+            options:
+                max-size: 10m
+                max-file: "3"
+
+    webserver:
+        build:
+            context: .
+            args:
+                AIRFLOW_DEPS: ""
+        restart: always
+        depends_on:
+            - postgres
+        environment:
+            - LOAD_EX=y
+            - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
+            - EXECUTOR=Celery
+            - POSTGRES_USER=airflow-local
+            - POSTGRES_PASSWORD=airflow-local
+            - POSTGRES_DB=airflow-local
+        logging:
+            options:
+                max-size: 10m
+                max-file: "3"
+        volumes:
+            - ./dags:/usr/local/airflow-local/dags
+            # - ./plugins:/usr/local/airflow-local/plugins
+        ports:
+            - "8080:8080"
+        command: webserver
+        healthcheck:
+            test: ["CMD-SHELL", "[ -f /usr/local/airflow-local/airflow-local-webserver.pid ]"]
+            interval: 30s
+            timeout: 30s
+            retries: 3
+
+    flower:
+        build:
+            context: .
+            args:
+                AIRFLOW_DEPS: ""
+        restart: always
+        depends_on:
+            - redis
+        environment:
+            - LOAD_EX=y
+            - EXECUTOR=Celery
+            - POSTGRES_USER=airflow-local
+            - POSTGRES_PASSWORD=airflow-local
+            - POSTGRES_DB=airflow-local
+            # - REDIS_PASSWORD=redispass
+        ports:
+            - "5555:5555"
+        command: flower
+
+    scheduler:
+        build:
+            context: .
+            args:
+                AIRFLOW_DEPS: ""
+        restart: always
+        depends_on:
+            - webserver
+        volumes:
+            - ./dags:/usr/local/airflow-local/dags
+            # Uncomment to include custom plugins
+            # - ./plugins:/usr/local/airflow-local/plugins
+        environment:
+            - LOAD_EX=y
+            - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
+            - EXECUTOR=Celery
+            - POSTGRES_USER=airflow-local
+            - POSTGRES_PASSWORD=airflow-local
+            - POSTGRES_DB=airflow-local
+            # - REDIS_PASSWORD=redispass
+        command: scheduler
+
+    worker:
+        build:
+            context: .
+            args:
+                AIRFLOW_DEPS: ""
+        restart: always
+        depends_on:
+            - scheduler
+        volumes:
+            - ./dags:/usr/local/airflow-local/dags
+            # Uncomment to include custom plugins
+            # - ./plugins:/usr/local/airflow-local/plugins
+            - ./keys:/tmp/keys
+        environment:
+            - LOAD_EX=y
+            - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
+            - EXECUTOR=Celery
+            - GOOGLE_APPLICATION_CREDENTIALS=/tmp/keys/key.json
+            # - POSTGRES_USER=airflow-local
+            # - POSTGRES_PASSWORD=airflow-local
+            # - POSTGRES_DB=airflow-local
+            # - REDIS_PASSWORD=redispass
+        command: worker

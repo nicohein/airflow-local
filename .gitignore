@@ -1,0 +1,23 @@
+.DS_Store
+
+venv
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+.Python
+
+
+# Environments
+.env
+env/
+venv/
+ENV/
+
+# PyCharm
+.idea/
+
+# Configs
+config/airflow.cfg
+keys/
