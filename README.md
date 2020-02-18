@@ -5,7 +5,7 @@ Thus for local testing and development we can use an AirFlow Docker environment.
 
 The Dockerfile is based on https://github.com/puckel/docker-airflow.
 
-To get started with this project do the following steps:
+To get started with this project do the following steps.
 
 Create the folder structure to match:
 
@@ -21,11 +21,14 @@ Create the folder structure to match:
     └── venv
 
 
-The key.json needs to be downloaded from Google Cloud for the 
-service account that is used during interactions with the Google Cloud.
+Download the `key.json` from Google Cloud for the service account that is used
+during interactions with the Google Cloud.
 
-The airflow config file can be donloaded here:
+Download the airflow config file can from:
 https://github.com/puckel/docker-airflow/tree/master/config
 
-The only reason for the replication od the config is the use of email notifications.
-Modify the section `[smtp]` of `airflow.cfg` as needed.
+Modify the the section `[smtp]` of `airflow.cfg` to allow airflow to send
+email notifications.
+
+Mount your local dags folder into the containers by modifying the volume paths.
+
