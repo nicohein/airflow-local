@@ -34,7 +34,7 @@ services:
                 max-size: 10m
                 max-file: "3"
         volumes:
-            - ../../sales-forecasting/sales-forecasting-dags/dags:/usr/local/airflow/dags
+            - ./dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
             # - ./plugins:/usr/local/airflow-local/plugins
         ports:
@@ -74,7 +74,7 @@ services:
         depends_on:
             - webserver
         volumes:
-            - ../../sales-forecasting/sales-forecasting-dags/dags:/usr/local/airflow/dags
+            - ./dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
             # - ./plugins:/usr/local/airflow-local/plugins
         environment:
@@ -96,7 +96,7 @@ services:
         depends_on:
             - scheduler
         volumes:
-            - ../../sales-forecasting/sales-forecasting-dags/dags:/usr/local/airflow/dags
+            - ./dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
             # - ./plugins:/usr/local/airflow-local/plugins
             - ./keys:/tmp/keys
