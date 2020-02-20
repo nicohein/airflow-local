@@ -15,6 +15,7 @@ Create the folder structure to match:
     ├── config
     │   └── airflow.cfg
     ├── dags
+    │   └── local_example_bash_operator.py
     ├── docker-compose.yaml
     ├── keys
     │   └── key.json
@@ -30,5 +31,11 @@ https://github.com/puckel/docker-airflow/tree/master/config
 Modify the the section `[smtp]` of `airflow.cfg` to allow airflow to send
 email notifications.
 
-Mount your local dags folder into the containers by modifying the volume paths.
+Mount your local dags folder into the containers by modifying the volume paths 
+(in the three services worker, scheduler and webserver).
 
+Use the following command to start the AirFlow:
+
+```shell script
+docker-compose up --force-recreate -d
+```
